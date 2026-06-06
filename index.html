@@ -408,10 +408,13 @@ td.emp{color:var(--muted);}
     <div class="card">
       <div class="card-title">📌 Meta del día <span id="c-op-fecha-title" style="color:var(--text);margin-left:auto;font-size:15px;font-weight:800;"></span></div>
       <div class="fecha-row">
-        <div><div class="lbl">Fecha</div><div class="val cargue" id="c-op-fecha-disp">—</div></div>
+        <div style="flex:1">
+          <div class="lbl">Fecha del reporte</div>
+          <input type="date" id="c-op-fecha-input" oninput="opCambiarFecha('c')"
+            style="margin-top:4px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--c1);background:transparent;border:none;outline:none;cursor:pointer;width:100%;" />
+        </div>
         <div><div class="lbl">Módulo</div><div class="val" style="font-size:15px;color:var(--c1)">SIC CARGUE</div></div>
       </div>
-      <div id="c-op-turno-info" style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:12px;background:var(--c1-bg);color:var(--c1);border:1px solid var(--c1-light);text-align:center;"></div>
       <div class="meta-req cargue">
         <div class="meta-req-title cargue">Total VH Planeados <span class="req-chip">OBLIGATORIO</span></div>
         <div class="meta-req-body">
@@ -538,10 +541,13 @@ td.emp{color:var(--muted);}
     <div class="card">
       <div class="card-title">📌 Meta del día <span id="d-op-fecha-title" style="color:var(--text);margin-left:auto;font-size:15px;font-weight:800;"></span></div>
       <div class="fecha-row">
-        <div><div class="lbl">Fecha</div><div class="val descargue" id="d-op-fecha-disp">—</div></div>
+        <div style="flex:1">
+          <div class="lbl">Fecha del reporte</div>
+          <input type="date" id="d-op-fecha-input" oninput="opCambiarFecha('d')"
+            style="margin-top:4px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--d1);background:transparent;border:none;outline:none;cursor:pointer;width:100%;" />
+        </div>
         <div><div class="lbl">Módulo</div><div class="val" style="font-size:15px;color:var(--d1)">SIC DESCARGUE</div></div>
       </div>
-      <div id="d-op-turno-info" style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:12px;background:var(--d1-bg);color:var(--d1);border:1px solid var(--d1-light);text-align:center;"></div>
       <div class="meta-req descargue">
         <div class="meta-req-title descargue">Total VH Planeados <span class="req-chip">OBLIGATORIO</span></div>
         <div class="meta-req-body">
@@ -720,28 +726,11 @@ function removeAllListeners(){
 }
 
 // ══ UTILS ══
-// FECHA INTELIGENTE POR TURNO
-// Cargue  (23:00-07:00): si hora=23 → fecha MAÑANA (día donde termina); si 00-07 → fecha HOY
-// Descargue (15:00-23:00): siempre fecha HOY
-function fechaTurno(t){
-  const now=new Date(), h=now.getHours();
-  if(t==='c' && h===23){
-    const manana=new Date(now); manana.setDate(manana.getDate()+1);
-    return manana.toISOString().slice(0,10);
-  }
-  return now.toISOString().slice(0,10);
-}
 function today(){return new Date().toISOString().slice(0,10)}
 function fmt(iso){if(!iso)return'—';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`}
-function descTurno(t){
-  const now=new Date(),h=now.getHours();
-  const f=fmt(fechaTurno(t));
-  if(t==='c'){
-    if(h===23) return '⚙️ Turno iniciando — reporte: '+f;
-    if(h>=0&&h<=7) return '🌙 Turno en curso — reporte: '+f;
-  }
-  return '📅 Reporte: '+f;
-}
+// Fecha activa por módulo — controlada por el selector manual del operario
+const opFecha={c:today(), d:today()};
+function getOpFecha(t){ return opFecha[t]; }
 function toast(msg,err=false){const e=document.getElementById('toast');e.textContent=msg;e.className='show'+(err?' error':'');setTimeout(()=>e.className='',2800)}
 
 // ══ NAVIGATION STATE ══
@@ -810,11 +799,10 @@ function goBack(to){
 const opState={c:{hora:null,vh:''},d:{hora:null,vh:''}};
 
 function opInit(t){
-  const f=fechaTurno(t);
-  document.getElementById(`${t}-op-fecha-disp`).textContent=fmt(f);
+  const f=getOpFecha(t);
+  const picker=document.getElementById(`${t}-op-fecha-input`);
+  if(picker){ picker.value=f; }
   document.getElementById(`${t}-op-fecha-title`).textContent=fmt(f);
-  const turnoEl=document.getElementById(`${t}-op-turno-info`);
-  if(turnoEl) turnoEl.textContent=descTurno(t);
 
   // Single listener on today's full record — updates everything live
   const ref=dayRef(t,f);
@@ -831,6 +819,15 @@ function opInit(t){
     opRenderHours(t,hours);
     opRenderResumen(t);
   });
+}
+
+function opCambiarFecha(t){
+  const picker=document.getElementById(`${t}-op-fecha-input`);
+  if(!picker||!picker.value) return;
+  opFecha[t]=picker.value;
+  document.getElementById(`${t}-op-fecha-title`).textContent=fmt(picker.value);
+  // reload firebase listener for new date
+  opInit(t);
 }
 
 function opRenderPlan(t,plan){
@@ -862,7 +859,7 @@ function opRenderHours(t,hours){
 }
 
 function opRenderResumen(t){
-  const f=fechaTurno(t);
+  const f=getOpFecha(t);
   const rec=cache[t][f]||{};
   const plan=cache[t][f+'_plan']||null;
   let tot=0,ant=0;
@@ -882,7 +879,7 @@ function opRenderResumen(t){
 function opGuardar(t){
   const val=parseInt(document.getElementById(`${t}-op-plan-vh`).value);
   if(isNaN(val)||val<1){opFlashErr(t,'Ingresa un número válido');return;}
-  planRef(t,fechaTurno(t)).set(val)
+  planRef(t,getOpFecha(t)).set(val)
     .then(()=>toast('✓ Meta guardada: '+val+' VH'))
     .catch(e=>toast('Error: '+e.message,true));
 }
@@ -916,7 +913,7 @@ function opReg(t){
   const v=parseInt(vh);
   const btn=document.getElementById(`${t}-op-btn-reg`);
   btn.disabled=true;
-  hourRef(t,fechaTurno(t),hora).set(v)
+  hourRef(t,getOpFecha(t),hora).set(v)
     .then(()=>{
       const ov=document.getElementById(`${t}-op-success`);
       document.getElementById(`${t}-op-smsg`).textContent='¡'+v+' VH registrados!';
@@ -933,7 +930,7 @@ function opFlashErr(t,msg){
   const e=document.getElementById(`${t}-op-plan-status`);
   e.textContent='❌ '+msg; e.className='meta-status pending';
   setTimeout(()=>{
-    const plan=cache[t][fechaTurno(t)+'_plan'];
+    const plan=cache[t][getOpFecha(t)+'_plan'];
     opRenderPlan(t,plan||null);
   },2000);
 }
@@ -943,7 +940,7 @@ function opFlashErr(t,msg){
 // ══════════════════════════════════════
 function tbInit(t){
   const pk=document.getElementById(`${t}-tb-picker`);
-  if(!pk.value)pk.value=fechaTurno(t);
+  if(!pk.value)pk.value=getOpFecha(t);
   document.getElementById(`${t}-tb-fecha-disp`).textContent=fmt(pk.value);
 
   // Listen to ALL data for this module (history + any day)
@@ -977,7 +974,7 @@ function tbDateChange(t){
 }
 
 function tbRenderChart(t){
-  const fecha=document.getElementById(`${t}-tb-picker`).value||fechaTurno(t);
+  const fecha=document.getElementById(`${t}-tb-picker`).value||getOpFecha(t);
   document.getElementById(`${t}-tb-chart-lbl`).textContent=fmt(fecha);
   const rec=cache[t][fecha]||{};
   const grid=document.getElementById(`${t}-tb-grid`);
