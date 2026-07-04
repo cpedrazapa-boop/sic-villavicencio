@@ -216,6 +216,12 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-
 .progress-bar-fill.cargue{background:linear-gradient(90deg,var(--c1-light),var(--green-light));}
 .progress-bar-fill.descargue{background:linear-gradient(90deg,var(--d1-light),var(--green-light));}
 .progress-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;margin-top:5px;}
+.digitador-card{width:100%;max-width:500px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.digitador-card .dg-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.digitador-card select{width:100%;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);cursor:pointer;outline:none;transition:border-color 0.2s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%2714%27 height=%2714%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%234A5068%27 stroke-width=%272%27><path d=%27M6 9l6 6 6-6%27/></svg>");background-repeat:no-repeat;background-position:right 12px center;}
+.digitador-card select:focus{border-color:var(--c1-light);}
+.digitador-card select.descargue:focus{border-color:var(--d1-light);}
+.digitador-card select.selected{border-color:var(--green-light);color:var(--green);}
 .lock-overlay{display:none;background:var(--orange-bg);border:2px solid #f0a050;border-radius:10px;padding:14px 18px;margin-bottom:16px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--orange);text-align:center;}
 .lock-overlay.show{display:block;}
 .success-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity 0.3s;}
@@ -486,6 +492,15 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
         <span class="meta-status pending" id="c-op-plan-status">⚠ Sin meta para hoy</span>
       </div>
     </div>
+    <div class="digitador-card">
+      <div class="dg-title">👤 ¿Quién digita? <span class="req-chip">OBLIGATORIO</span></div>
+      <select id="c-op-digitador">
+        <option value="">— Selecciona tu nombre —</option>
+        <option value="Jhon Cuellar">Jhon Cuellar</option>
+        <option value="Camilo Baquero">Camilo Baquero</option>
+        <option value="Anderson Forero">Anderson Forero</option>
+      </select>
+    </div>
     <div class="card">
       <div class="card-title">🕐 ¿Qué hora reportas?</div>
       <div class="lock-overlay show" id="c-op-lock">🔒 Primero guarda los VH Planeados del día</div>
@@ -588,8 +603,8 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
           <button class="btn-excel" onclick="tbExcel('c')">⬇ Excel</button>
         </div>
       </div>
-      <table><thead><tr class="c"><th>FECHA</th><th>HR 23:00</th><th>HR 00:00</th><th>HR 01:00</th><th>HR 02:00</th><th>HR 03:00</th><th>HR 04:00</th><th>HR 05:00</th><th>HR 06:00</th><th>HR 07:00</th><th>TOTAL</th><th>VH PLAN.</th><th>EFIC.%</th></tr></thead>
-      <tbody id="c-tb-hist-body"><tr><td colspan="13" class="no-data">Sin registros aún</td></tr></tbody></table>
+      <table><thead><tr class="c"><th>FECHA</th><th>HR 23:00</th><th>HR 00:00</th><th>HR 01:00</th><th>HR 02:00</th><th>HR 03:00</th><th>HR 04:00</th><th>HR 05:00</th><th>HR 06:00</th><th>HR 07:00</th><th>TOTAL</th><th>VH PLAN.</th><th>EFIC.%</th><th>DIGITADO</th></tr></thead>
+      <tbody id="c-tb-hist-body"><tr><td colspan="14" class="no-data">Sin registros aún</td></tr></tbody></table>
       <div class="hist-count" id="c-tb-hist-count"></div>
       <div class="resumen-mes-wrap" id="c-resumen-mes-wrap">
         <div class="resumen-mes-title">📅 Cumplimiento por Mes</div>
@@ -627,6 +642,15 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
         </div>
         <span class="meta-status pending" id="d-op-plan-status">⚠ Sin meta para hoy</span>
       </div>
+    </div>
+    <div class="digitador-card">
+      <div class="dg-title">👤 ¿Quién digita? <span class="req-chip">OBLIGATORIO</span></div>
+      <select id="d-op-digitador" class="descargue">
+        <option value="">— Selecciona tu nombre —</option>
+        <option value="Jhon Cuellar">Jhon Cuellar</option>
+        <option value="Camilo Baquero">Camilo Baquero</option>
+        <option value="Anderson Forero">Anderson Forero</option>
+      </select>
     </div>
     <div class="card">
       <div class="card-title">🕐 ¿Qué hora reportas?</div>
@@ -730,8 +754,8 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
           <button class="btn-excel" onclick="tbExcel('d')">⬇ Excel</button>
         </div>
       </div>
-      <table><thead><tr class="d"><th>FECHA</th><th>HR 15:00</th><th>HR 16:00</th><th>HR 17:00</th><th>HR 18:00</th><th>HR 19:00</th><th>HR 20:00</th><th>HR 21:00</th><th>HR 22:00</th><th>HR 23:00</th><th>TOTAL</th><th>VH PLAN.</th><th>EFIC.%</th></tr></thead>
-      <tbody id="d-tb-hist-body"><tr><td colspan="13" class="no-data">Sin registros aún</td></tr></tbody></table>
+      <table><thead><tr class="d"><th>FECHA</th><th>HR 15:00</th><th>HR 16:00</th><th>HR 17:00</th><th>HR 18:00</th><th>HR 19:00</th><th>HR 20:00</th><th>HR 21:00</th><th>HR 22:00</th><th>HR 23:00</th><th>TOTAL</th><th>VH PLAN.</th><th>EFIC.%</th><th>DIGITADO</th></tr></thead>
+      <tbody id="d-tb-hist-body"><tr><td colspan="14" class="no-data">Sin registros aún</td></tr></tbody></table>
       <div class="hist-count" id="d-tb-hist-count"></div>
       <div class="resumen-mes-wrap" id="d-resumen-mes-wrap">
         <div class="resumen-mes-title">📅 Cumplimiento por Mes</div>
@@ -769,7 +793,7 @@ const CFG = {
     labels:['23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00'],
     hlmap:{23:'23:00',0:'00:00',1:'01:00',2:'02:00',3:'03:00',4:'04:00',5:'05:00',6:'06:00',7:'07:00'},
     beforeMeta:[23,0,1,2,3,4,5],
-    csvHeader:'FECHA,HR 23:00,HR 00:00,HR 01:00,HR 02:00,HR 03:00,HR 04:00,HR 05:00,HR 06:00,HR 07:00,TOTAL,VH PLANEADOS,EFICIENCIA %\n'
+    csvHeader:'FECHA,HR 23:00,HR 00:00,HR 01:00,HR 02:00,HR 03:00,HR 04:00,HR 05:00,HR 06:00,HR 07:00,TOTAL,VH PLANEADOS,EFICIENCIA %,DIGITADO POR\n'
   },
   d: {
     path:'descargue',
@@ -777,7 +801,7 @@ const CFG = {
     labels:['15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'],
     hlmap:{15:'15:00',16:'16:00',17:'17:00',18:'18:00',19:'19:00',20:'20:00',21:'21:00',22:'22:00',23:'23:00'},
     beforeMeta:[15,16,17,18,19,20,21],
-    csvHeader:'FECHA,HR 15:00,HR 16:00,HR 17:00,HR 18:00,HR 19:00,HR 20:00,HR 21:00,HR 22:00,HR 23:00,TOTAL,VH PLANEADOS,EFICIENCIA %\n'
+    csvHeader:'FECHA,HR 15:00,HR 16:00,HR 17:00,HR 18:00,HR 19:00,HR 20:00,HR 21:00,HR 22:00,HR 23:00,TOTAL,VH PLANEADOS,EFICIENCIA %,DIGITADO POR\n'
   }
 };
 const MAX=12;
@@ -890,10 +914,15 @@ function opInit(t){
     const data=snap.val()||{};
     const hours=data.hours||{};
     const plan=data.plan||null;
+    const dig=data.digitadoPor||null;
     // cache it
     cache[t][f]={};
     CFG[t].hours.forEach(h=>{ const v=hours[`h${h}`]; if(v!==undefined) cache[t][f][h]=v; });
     cache[t][f+'_plan']=plan;
+    cache[t][f+'_dig']=dig;
+    // restore digitador selector
+    const digSel=document.getElementById(`${t}-op-digitador`);
+    if(dig && digSel){digSel.value=dig;digSel.classList.add('selected');}
     // refresh UI
     opRenderPlan(t,plan);
     opRenderHours(t,hours);
@@ -959,7 +988,10 @@ function opRenderResumen(t){
 function opGuardar(t){
   const val=parseInt(document.getElementById(`${t}-op-plan-vh`).value);
   if(isNaN(val)||val<1){opFlashErr(t,'Ingresa un número válido');return;}
-  planRef(t,getOpFecha(t)).set(val)
+  const dig=document.getElementById(`${t}-op-digitador`).value;
+  if(!dig){toast('⚠ Selecciona quién digita',true);return;}
+  const updates={plan:val, digitadoPor:dig};
+  dayRef(t,getOpFecha(t)).update(updates)
     .then(()=>toast('✓ Meta guardada: '+val+' VH'))
     .catch(e=>toast('Error: '+e.message,true));
 }
@@ -990,10 +1022,15 @@ function opNp(v,t){
 function opReg(t){
   const {hora,vh}=opState[t];
   if(hora===null||vh==='')return;
+  const dig=document.getElementById(`${t}-op-digitador`).value;
+  if(!dig){toast('⚠ Selecciona quién digita',true);return;}
   const v=parseInt(vh);
   const btn=document.getElementById(`${t}-op-btn-reg`);
   btn.disabled=true;
-  hourRef(t,getOpFecha(t),hora).set(v)
+  const updates={};
+  updates[`hours/h${hora}`]=v;
+  updates['digitadoPor']=dig;
+  dayRef(t,getOpFecha(t)).update(updates)
     .then(()=>{
       const ov=document.getElementById(`${t}-op-success`);
       document.getElementById(`${t}-op-smsg`).textContent='¡'+v+' VH registrados!';
@@ -1040,6 +1077,7 @@ function tbInit(t){
         cache[t][fecha][hNum]=hours[hk];
       });
       if(dayData.plan!==undefined) cache[t][fecha+'_plan']=dayData.plan;
+      if(dayData.digitadoPor) cache[t][fecha+'_dig']=dayData.digitadoPor;
     });
     tbRenderChart(t);
     tbRenderHist(t);
@@ -1093,7 +1131,7 @@ function tbRenderMeta(t,fecha){
 function tbPopYears(t){
   const sel=document.getElementById(`${t}-f-year`);
   const cur=sel.value||new Date().getFullYear().toString();
-  const yrs=[...new Set(Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&k.length===10).map(k=>k.slice(0,4)))].sort();
+  const yrs=[...new Set(Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&!k.includes('_dig')&&k.length===10).map(k=>k.slice(0,4)))].sort();
   if(!yrs.includes(new Date().getFullYear().toString())) yrs.push(new Date().getFullYear().toString());
   sel.innerHTML='<option value="">Todos</option>';
   yrs.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;sel.appendChild(o);});
@@ -1113,7 +1151,7 @@ function tbClearF(t){
 }
 
 function tbGetDates(t){
-  let dates=Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&k.length===10).sort();
+  let dates=Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&!k.includes('_dig')&&k.length===10).sort();
   const yr=document.getElementById(`${t}-f-year`).value;
   const mo=document.getElementById(`${t}-f-month`).value;
   const dy=document.getElementById(`${t}-f-day`).value;
@@ -1155,7 +1193,7 @@ function tbRenderHist(t){
   let lbl='';
   if(dy)lbl=fmt(dy); else if(yr&&mo)lbl=MES[parseInt(mo)]+' '+yr; else if(yr)lbl=yr; else if(mo)lbl=MES[parseInt(mo)];
   document.getElementById(`${t}-tb-hist-flbl`).textContent=lbl?'Filtro: '+lbl:'';
-  if(dates.length===0){body.innerHTML='<tr><td colspan="13" class="no-data">Sin registros para el filtro</td></tr>';document.getElementById(`${t}-tb-hist-count`).textContent='';
+  if(dates.length===0){body.innerHTML='<tr><td colspan="14" class="no-data">Sin registros para el filtro</td></tr>';document.getElementById(`${t}-tb-hist-count`).textContent='';
     document.getElementById(`${t}-resumen-mes-wrap`).classList.remove('show');return;}
   body.innerHTML='';
   const mode=tbViewMode[t]||'day';
@@ -1171,6 +1209,7 @@ function tbRenderHist(t){
     html+=`<td style="font-weight:800">${totVal}</td>`;
     html+=`<td style="font-weight:800">${planVal||'—'}</td>`;
     html+=eff!==null?`<td class="${effCls}" style="font-size:${rowClass==='month'?'15':'13'}px;font-weight:900">${eff}%</td>`:`<td class="emp">—</td>`;
+    html+=`<td></td>`;
     const tr=document.createElement('tr');
     tr.className=`${rowClass}-summary ${clsT}`;
     tr.innerHTML=html;
@@ -1199,6 +1238,8 @@ function tbRenderHist(t){
           html+=`<td class="vc">${plan!==undefined?plan:'—'}</td>`;
           if(plan!==undefined&&plan>0){const e=Math.round((ant_h/plan)*100);const cls=e>=100?'eok':e>=75?'emid':'elow';html+=`<td class="${cls}">${e}%</td>`;}
           else html+=`<td class="emp">—</td>`;
+          const dig=cache[t][fecha+'_dig']||'';
+          html+=`<td style="font-size:12px">${dig||'—'}</td>`;
           const tr=document.createElement('tr');tr.innerHTML=html;body.appendChild(tr);
           wTot+=tot;wAnt+=ant_h;if(plan)wPlan+=plan;
         });
@@ -1339,6 +1380,7 @@ function tbExcel(t){
     row.push(tot); row.push(plan!==undefined?plan:'');
     let ant_e=0;CFG[t].hours.forEach(h=>{const v=rec[h];if(v!==undefined&&v!==null&&CFG[t].beforeMeta.includes(h))ant_e+=v;});
     row.push(plan&&plan>0?Math.round((ant_e/plan)*100)+'%':'');
+    row.push(cache[t][fecha+'_dig']||'');
     csv+=row.join(',')+'\n';
   });
   const yr=document.getElementById(`${t}-f-year`).value, mo=document.getElementById(`${t}-f-month`).value, dy=document.getElementById(`${t}-f-day`).value;
