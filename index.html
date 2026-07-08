@@ -222,6 +222,20 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-
 .digitador-card select:focus{border-color:var(--c1-light);}
 .digitador-card select.descargue:focus{border-color:var(--d1-light);}
 .digitador-card select.selected{border-color:var(--green-light);color:var(--green);}
+.disp-card{width:100%;max-width:500px;background:var(--surface);border:2px dashed var(--border);border-radius:16px;padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.disp-card.saved{border:2px solid var(--green-light);border-style:solid;}
+.disp-card .disp-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.disp-card .disp-hint{font-family:'Barlow',sans-serif;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.4;}
+.disp-card .disp-row{display:flex;gap:10px;align-items:center;}
+.disp-card input[type=number]{flex:1;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;padding:10px 14px;border:2px solid var(--border);border-radius:10px;text-align:center;outline:none;color:var(--text);background:var(--surface);}
+.disp-card input[type=number]:focus{border-color:var(--blue-light);}
+.disp-card .btn-disp{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;padding:12px 18px;border:none;border-radius:10px;cursor:pointer;color:#fff;text-transform:uppercase;}
+.disp-card .btn-disp.cargue{background:var(--c1);}
+.disp-card .btn-disp.descargue{background:var(--d1);}
+.disp-card .disp-status{font-family:'Barlow Condensed',sans-serif;font-size:12px;margin-top:8px;color:var(--muted);}
+.disp-card .disp-status.ok{color:var(--green);}
+.eff-dual{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;}
+.eff-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600;}
 .lock-overlay{display:none;background:var(--orange-bg);border:2px solid #f0a050;border-radius:10px;padding:14px 18px;margin-bottom:16px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--orange);text-align:center;}
 .lock-overlay.show{display:block;}
 .success-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity 0.3s;}
@@ -543,6 +557,15 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
         <div class="progress-label"><span id="c-op-prog-l">0 VH</span><span id="c-op-prog-r">Meta: —</span></div>
       </div>
     </div>
+    <div class="disp-card" id="c-op-disp-card">
+      <div class="disp-title">🅿 VH Disponibles — Cierre de turno</div>
+      <div class="disp-hint">¿Cuántos vehículos estuvieron realmente disponibles en el parqueadero? Este dato ajusta la eficiencia real.</div>
+      <div class="disp-row">
+        <input type="number" id="c-op-disp-vh" min="1" placeholder="Ej: 40" />
+        <button class="btn-disp cargue" onclick="opGuardarDisp('c')">✔ Cerrar</button>
+      </div>
+      <div class="disp-status" id="c-op-disp-status"></div>
+    </div>
     <div class="success-overlay" id="c-op-success">
       <div class="success-icon">✅</div>
       <div class="success-msg cargue" id="c-op-smsg">¡Registrado!</div>
@@ -603,8 +626,8 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
           <button class="btn-excel" onclick="tbExcel('c')">⬇ Excel</button>
         </div>
       </div>
-      <table><thead><tr class="c"><th>FECHA</th><th>HR 23:00</th><th>HR 00:00</th><th>HR 01:00</th><th>HR 02:00</th><th>HR 03:00</th><th>HR 04:00</th><th>HR 05:00</th><th>HR 06:00</th><th>HR 07:00</th><th>TOTAL</th><th>VH PLAN.</th><th>EFIC.%</th><th>DIGITADO</th></tr></thead>
-      <tbody id="c-tb-hist-body"><tr><td colspan="14" class="no-data">Sin registros aún</td></tr></tbody></table>
+      <table><thead><tr class="c"><th>FECHA</th><th>HR 23:00</th><th>HR 00:00</th><th>HR 01:00</th><th>HR 02:00</th><th>HR 03:00</th><th>HR 04:00</th><th>HR 05:00</th><th>HR 06:00</th><th>HR 07:00</th><th>TOTAL</th><th>VH PLAN.</th><th>VH DISP.</th><th>EFIC.%</th><th>DIGITADO</th></tr></thead>
+      <tbody id="c-tb-hist-body"><tr><td colspan="15" class="no-data">Sin registros aún</td></tr></tbody></table>
       <div class="hist-count" id="c-tb-hist-count"></div>
       <div class="resumen-mes-wrap" id="c-resumen-mes-wrap">
         <div class="resumen-mes-title">📅 Cumplimiento por Mes</div>
@@ -694,6 +717,15 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
         <div class="progress-label"><span id="d-op-prog-l">0 VH</span><span id="d-op-prog-r">Meta: —</span></div>
       </div>
     </div>
+    <div class="disp-card" id="d-op-disp-card">
+      <div class="disp-title">🅿 VH Disponibles — Cierre de turno</div>
+      <div class="disp-hint">¿Cuántos vehículos estuvieron realmente disponibles? Este dato ajusta la eficiencia real.</div>
+      <div class="disp-row">
+        <input type="number" id="d-op-disp-vh" min="1" placeholder="Ej: 38" />
+        <button class="btn-disp descargue" onclick="opGuardarDisp('d')">✔ Cerrar</button>
+      </div>
+      <div class="disp-status" id="d-op-disp-status"></div>
+    </div>
     <div class="success-overlay" id="d-op-success">
       <div class="success-icon">✅</div>
       <div class="success-msg descargue" id="d-op-smsg">¡Registrado!</div>
@@ -754,8 +786,8 @@ tr.month-summary.md td.ms-eff-low{background:#FDDBD8!important;color:var(--red);
           <button class="btn-excel" onclick="tbExcel('d')">⬇ Excel</button>
         </div>
       </div>
-      <table><thead><tr class="d"><th>FECHA</th><th>HR 15:00</th><th>HR 16:00</th><th>HR 17:00</th><th>HR 18:00</th><th>HR 19:00</th><th>HR 20:00</th><th>HR 21:00</th><th>HR 22:00</th><th>HR 23:00</th><th>TOTAL</th><th>VH PLAN.</th><th>EFIC.%</th><th>DIGITADO</th></tr></thead>
-      <tbody id="d-tb-hist-body"><tr><td colspan="14" class="no-data">Sin registros aún</td></tr></tbody></table>
+      <table><thead><tr class="d"><th>FECHA</th><th>HR 15:00</th><th>HR 16:00</th><th>HR 17:00</th><th>HR 18:00</th><th>HR 19:00</th><th>HR 20:00</th><th>HR 21:00</th><th>HR 22:00</th><th>HR 23:00</th><th>TOTAL</th><th>VH PLAN.</th><th>VH DISP.</th><th>EFIC.%</th><th>DIGITADO</th></tr></thead>
+      <tbody id="d-tb-hist-body"><tr><td colspan="15" class="no-data">Sin registros aún</td></tr></tbody></table>
       <div class="hist-count" id="d-tb-hist-count"></div>
       <div class="resumen-mes-wrap" id="d-resumen-mes-wrap">
         <div class="resumen-mes-title">📅 Cumplimiento por Mes</div>
@@ -793,7 +825,7 @@ const CFG = {
     labels:['23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00'],
     hlmap:{23:'23:00',0:'00:00',1:'01:00',2:'02:00',3:'03:00',4:'04:00',5:'05:00',6:'06:00',7:'07:00'},
     beforeMeta:[23,0,1,2,3,4,5],
-    csvHeader:'FECHA,HR 23:00,HR 00:00,HR 01:00,HR 02:00,HR 03:00,HR 04:00,HR 05:00,HR 06:00,HR 07:00,TOTAL,VH PLANEADOS,EFICIENCIA %,DIGITADO POR\n'
+    csvHeader:'FECHA,HR 23:00,HR 00:00,HR 01:00,HR 02:00,HR 03:00,HR 04:00,HR 05:00,HR 06:00,HR 07:00,TOTAL,VH PLANEADOS,VH DISPONIBLES,EFICIENCIA %,DIGITADO POR\n'
   },
   d: {
     path:'descargue',
@@ -801,7 +833,7 @@ const CFG = {
     labels:['15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'],
     hlmap:{15:'15:00',16:'16:00',17:'17:00',18:'18:00',19:'19:00',20:'20:00',21:'21:00',22:'22:00',23:'23:00'},
     beforeMeta:[15,16,17,18,19,20,21],
-    csvHeader:'FECHA,HR 15:00,HR 16:00,HR 17:00,HR 18:00,HR 19:00,HR 20:00,HR 21:00,HR 22:00,HR 23:00,TOTAL,VH PLANEADOS,EFICIENCIA %,DIGITADO POR\n'
+    csvHeader:'FECHA,HR 15:00,HR 16:00,HR 17:00,HR 18:00,HR 19:00,HR 20:00,HR 21:00,HR 22:00,HR 23:00,TOTAL,VH PLANEADOS,VH DISPONIBLES,EFICIENCIA %,DIGITADO POR\n'
   }
 };
 const MAX=12;
@@ -915,14 +947,24 @@ function opInit(t){
     const hours=data.hours||{};
     const plan=data.plan||null;
     const dig=data.digitadoPor||null;
+    const disp=data.disponibles||null;
     // cache it
     cache[t][f]={};
     CFG[t].hours.forEach(h=>{ const v=hours[`h${h}`]; if(v!==undefined) cache[t][f][h]=v; });
     cache[t][f+'_plan']=plan;
     cache[t][f+'_dig']=dig;
+    cache[t][f+'_disp']=disp;
     // restore digitador selector
     const digSel=document.getElementById(`${t}-op-digitador`);
     if(dig && digSel){digSel.value=dig;digSel.classList.add('selected');}
+    // restore disponibles
+    const dispInp=document.getElementById(`${t}-op-disp-vh`);
+    const dispCard=document.getElementById(`${t}-op-disp-card`);
+    const dispSt=document.getElementById(`${t}-op-disp-status`);
+    if(disp!==null&&disp!==undefined){
+      dispInp.value=disp;dispCard.classList.add('saved');
+      dispSt.textContent='✔ Cerrado con '+disp+' VH disponibles';dispSt.className='disp-status ok';
+    } else {dispCard.classList.remove('saved');dispSt.textContent='';dispSt.className='disp-status';}
     // refresh UI
     opRenderPlan(t,plan);
     opRenderHours(t,hours);
@@ -971,18 +1013,26 @@ function opRenderResumen(t){
   const f=getOpFecha(t);
   const rec=cache[t][f]||{};
   const plan=cache[t][f+'_plan']||null;
+  const disp=cache[t][f+'_disp']||null;
   let tot=0,ant=0;
   CFG[t].hours.forEach(h=>{if(rec[h]!==undefined){tot+=rec[h];if(CFG[t].beforeMeta.includes(h))ant+=rec[h];}});
   document.getElementById(`${t}-op-res-total`).textContent=tot;
   document.getElementById(`${t}-op-res-antes`).textContent=ant;
-  const eff=plan&&plan>0?Math.round((ant/plan)*100):null;
+  const effPlan=plan&&plan>0?Math.round((ant/plan)*100):null;
+  const effDisp=disp&&disp>0?Math.round((ant/disp)*100):null;
   const ee=document.getElementById(`${t}-op-res-eff`);
-  if(eff!==null){ee.textContent=eff+'%';ee.style.color=eff>=100?'var(--green-light)':eff>=75?'var(--orange)':'var(--red)';}
-  else{ee.textContent='—';ee.style.color='var(--muted)';}
-  const pct=plan?Math.min((ant/plan)*100,100):0;
+  if(effDisp!==null){
+    ee.innerHTML=effDisp+'%<span class="eff-tag" style="background:var(--blue-bg);color:var(--blue)">vs disp.</span>';
+    ee.style.color=effDisp>=100?'var(--green-light)':effDisp>=75?'var(--orange)':'var(--red)';
+  } else if(effPlan!==null){
+    ee.textContent=effPlan+'%';
+    ee.style.color=effPlan>=100?'var(--green-light)':effPlan>=75?'var(--orange)':'var(--red)';
+  } else {ee.textContent='—';ee.style.color='var(--muted)';}
+  const base=disp||plan;
+  const pct=base?Math.min((ant/base)*100,100):0;
   document.getElementById(`${t}-op-prog`).style.width=pct+'%';
   document.getElementById(`${t}-op-prog-l`).textContent=tot+' VH';
-  document.getElementById(`${t}-op-prog-r`).textContent=plan?'Meta: '+plan:'Meta: —';
+  document.getElementById(`${t}-op-prog-r`).textContent=(disp?'Disp: '+disp:plan?'Meta: '+plan:'Meta: —');
 }
 
 function opGuardar(t){
@@ -993,6 +1043,14 @@ function opGuardar(t){
   const updates={plan:val, digitadoPor:dig};
   dayRef(t,getOpFecha(t)).update(updates)
     .then(()=>toast('✓ Meta guardada: '+val+' VH'))
+    .catch(e=>toast('Error: '+e.message,true));
+}
+
+function opGuardarDisp(t){
+  const val=parseInt(document.getElementById(`${t}-op-disp-vh`).value);
+  if(isNaN(val)||val<1){toast('⚠ Ingresa un número válido de VH disponibles',true);return;}
+  dayRef(t,getOpFecha(t)).update({disponibles:val})
+    .then(()=>toast('✔ Cierre guardado: '+val+' VH disponibles'))
     .catch(e=>toast('Error: '+e.message,true));
 }
 
@@ -1078,6 +1136,7 @@ function tbInit(t){
       });
       if(dayData.plan!==undefined) cache[t][fecha+'_plan']=dayData.plan;
       if(dayData.digitadoPor) cache[t][fecha+'_dig']=dayData.digitadoPor;
+      if(dayData.disponibles!==undefined) cache[t][fecha+'_disp']=dayData.disponibles;
     });
     tbRenderChart(t);
     tbRenderHist(t);
@@ -1116,22 +1175,24 @@ function tbRenderChart(t){
 function tbRenderMeta(t,fecha){
   const rec=cache[t][fecha]||{};
   const plan=cache[t][fecha+'_plan']||null;
+  const disp=cache[t][fecha+'_disp']||null;
   let tot=0,ant=0;
   CFG[t].hours.forEach(h=>{if(rec[h]!==undefined){tot+=rec[h];if(CFG[t].beforeMeta.includes(h))ant+=rec[h];}});
   document.getElementById(`${t}-tb-total`).textContent=tot;
   document.getElementById(`${t}-tb-antes`).textContent=ant;
   document.getElementById(`${t}-tb-m-antes`).textContent=ant;
-  document.getElementById(`${t}-tb-m-meta`).textContent=plan!==null?plan:'—';
-  const eff=plan&&plan>0?Math.round((ant/plan)*100):null;
+  document.getElementById(`${t}-tb-m-meta`).textContent=disp?disp+' (disp)':(plan!==null?plan:'—');
+  const base=disp||plan;
+  const eff=base&&base>0?Math.round((ant/base)*100):null;
   const ep=document.getElementById(`${t}-tb-eff`);
-  if(eff!==null){ep.textContent=eff+'%';ep.style.background=eff>=100?'var(--green-light)':eff>=75?'var(--orange)':'var(--red)';}
+  if(eff!==null){ep.textContent=eff+'%'+(disp?' ⓓ':'');ep.style.background=eff>=100?'var(--green-light)':eff>=75?'var(--orange)':'var(--red)';}
   else{ep.textContent='—';ep.style.background='var(--muted)';}
 }
 
 function tbPopYears(t){
   const sel=document.getElementById(`${t}-f-year`);
   const cur=sel.value||new Date().getFullYear().toString();
-  const yrs=[...new Set(Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&!k.includes('_dig')&&k.length===10).map(k=>k.slice(0,4)))].sort();
+  const yrs=[...new Set(Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&!k.includes('_dig')&&!k.includes('_disp')&&k.length===10).map(k=>k.slice(0,4)))].sort();
   if(!yrs.includes(new Date().getFullYear().toString())) yrs.push(new Date().getFullYear().toString());
   sel.innerHTML='<option value="">Todos</option>';
   yrs.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;sel.appendChild(o);});
@@ -1151,7 +1212,7 @@ function tbClearF(t){
 }
 
 function tbGetDates(t){
-  let dates=Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&!k.includes('_dig')&&k.length===10).sort();
+  let dates=Object.keys(cache[t]).filter(k=>!k.includes('_plan')&&!k.includes('_dig')&&!k.includes('_disp')&&k.length===10).sort();
   const yr=document.getElementById(`${t}-f-year`).value;
   const mo=document.getElementById(`${t}-f-month`).value;
   const dy=document.getElementById(`${t}-f-day`).value;
@@ -1193,7 +1254,7 @@ function tbRenderHist(t){
   let lbl='';
   if(dy)lbl=fmt(dy); else if(yr&&mo)lbl=MES[parseInt(mo)]+' '+yr; else if(yr)lbl=yr; else if(mo)lbl=MES[parseInt(mo)];
   document.getElementById(`${t}-tb-hist-flbl`).textContent=lbl?'Filtro: '+lbl:'';
-  if(dates.length===0){body.innerHTML='<tr><td colspan="14" class="no-data">Sin registros para el filtro</td></tr>';document.getElementById(`${t}-tb-hist-count`).textContent='';
+  if(dates.length===0){body.innerHTML='<tr><td colspan="15" class="no-data">Sin registros para el filtro</td></tr>';document.getElementById(`${t}-tb-hist-count`).textContent='';
     document.getElementById(`${t}-resumen-mes-wrap`).classList.remove('show');return;}
   body.innerHTML='';
   const mode=tbViewMode[t]||'day';
@@ -1208,6 +1269,7 @@ function tbRenderHist(t){
     CFG[t].hours.forEach(()=>html+=`<td style="opacity:0.4">—</td>`);
     html+=`<td style="font-weight:800">${totVal}</td>`;
     html+=`<td style="font-weight:800">${planVal||'—'}</td>`;
+    html+=`<td style="opacity:0.4">—</td>`;
     html+=eff!==null?`<td class="${effCls}" style="font-size:${rowClass==='month'?'15':'13'}px;font-weight:900">${eff}%</td>`:`<td class="emp">—</td>`;
     html+=`<td></td>`;
     const tr=document.createElement('tr');
@@ -1230,13 +1292,15 @@ function tbRenderHist(t){
       Object.keys(byWeek).sort().forEach(wk=>{
         let wTot=0,wAnt=0,wPlan=0;
         byWeek[wk].forEach(fecha=>{
-          const rec=cache[t][fecha]||{},plan=cache[t][fecha+'_plan'];
+          const rec=cache[t][fecha]||{},plan=cache[t][fecha+'_plan'],disp=cache[t][fecha+'_disp'];
           let tot=0,ant_h=0;
           let html=`<td class="dc ${t}">${fmt(fecha)}</td>`;
           CFG[t].hours.forEach(h=>{const v=rec[h];if(v!==undefined&&v!==null){html+=`<td>${v}</td>`;tot+=v;if(CFG[t].beforeMeta.includes(h))ant_h+=v;}else html+=`<td class="emp">—</td>`;});
           html+=`<td class="tc">${tot}</td>`;
           html+=`<td class="vc">${plan!==undefined?plan:'—'}</td>`;
-          if(plan!==undefined&&plan>0){const e=Math.round((ant_h/plan)*100);const cls=e>=100?'eok':e>=75?'emid':'elow';html+=`<td class="${cls}">${e}%</td>`;}
+          html+=`<td class="vc">${disp!==undefined&&disp!==null?disp:'—'}</td>`;
+          const effBase=disp||plan;
+          if(effBase!==undefined&&effBase!==null&&effBase>0){const e=Math.round((ant_h/effBase)*100);const cls=e>=100?'eok':e>=75?'emid':'elow';html+=`<td class="${cls}">${e}%${disp?' ⓓ':''}</td>`;}
           else html+=`<td class="emp">—</td>`;
           const dig=cache[t][fecha+'_dig']||'';
           html+=`<td style="font-size:12px">${dig||'—'}</td>`;
@@ -1374,12 +1438,14 @@ function tbExcel(t){
   if(dates.length===0){toast('Sin datos para exportar',true);return;}
   let csv=CFG[t].csvHeader;
   dates.forEach(fecha=>{
-    const rec=cache[t][fecha]||{}, plan=cache[t][fecha+'_plan'];
+    const rec=cache[t][fecha]||{}, plan=cache[t][fecha+'_plan'], disp=cache[t][fecha+'_disp'];
     let tot=0, row=[fmt(fecha)];
     CFG[t].hours.forEach(h=>{const v=rec[h];if(v!==undefined&&v!==null){row.push(v);tot+=v;}else row.push('');});
     row.push(tot); row.push(plan!==undefined?plan:'');
+    row.push(disp!==undefined&&disp!==null?disp:'');
     let ant_e=0;CFG[t].hours.forEach(h=>{const v=rec[h];if(v!==undefined&&v!==null&&CFG[t].beforeMeta.includes(h))ant_e+=v;});
-    row.push(plan&&plan>0?Math.round((ant_e/plan)*100)+'%':'');
+    const effBase=disp||plan;
+    row.push(effBase&&effBase>0?Math.round((ant_e/effBase)*100)+'%':'');
     row.push(cache[t][fecha+'_dig']||'');
     csv+=row.join(',')+'\n';
   });
